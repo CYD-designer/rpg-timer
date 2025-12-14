@@ -2,45 +2,92 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>RPG Таймер</title>
+<title>RPG Таймер Пиксельный</title>
 <style>
   body {
     margin: 0;
     padding: 0;
     background: #87CEEB; /* Голубое небо */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Press Start 2P', cursive; /* Пиксельный шрифт, можно подключить через Google Fonts */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    overflow: hidden;
   }
 
+  /* Остров/травка */
   .island {
     position: relative;
-    width: 300px;
-    height: 150px;
-    background: #2E8B57; /* Зеленый остров */
+    width: 320px;
+    height: 180px;
+    background: #2E8B57;
     border-radius: 50% 50% 20% 20%;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
     display: flex;
     justify-content: center;
     align-items: center;
-    color: #fff;
-    font-size: 1.5em;
     flex-direction: column;
+    text-align: center;
+  }
+
+  /* Анимация травы с помощью CSS keyframes */
+  .grass {
+    position: absolute;
+    bottom: 10px;
+    width: 100%;
+    height: 40px;
+    background: repeating-linear-gradient(
+      135deg,
+      #2e8b57 0 5px,
+      #3cb371 5px 10px
+    );
+    animation: sway 2s infinite alternate;
+  }
+
+  @keyframes sway {
+    0% { transform: translateX(0px) rotate(0deg); }
+    50% { transform: translateX(2px) rotate(1deg); }
+    100% { transform: translateX(-2px) rotate(-1deg); }
+  }
+
+  /* Таймер */
+  .timer {
+    z-index: 2;
+    color: #fff;
+    font-size: 14px;
     text-align: center;
   }
 
   .timer span {
     display: block;
-    margin: 5px 0;
+    margin: 2px 0;
     font-weight: bold;
   }
+
+  /* Пиксельный стиль для таймера */
+  .timer {
+    text-shadow: 1px 1px #000, -1px -1px #000;
+  }
+
+  /* Для вставки GIF рядом с таймером */
+  .character {
+    position: absolute;
+    bottom: 30px;
+    left: -60px;
+    width: 60px;
+    height: 60px;
+    background: url('https://media.giphy.com/media/5xaOcLGvzHxDKjufnLW/giphy.gif') no-repeat center/contain;
+    z-index: 1;
+  }
+
 </style>
 </head>
 <body>
 
 <div class="island">
+  <div class="character"></div> <!-- Пикачу/GIF -->
+  <div class="grass"></div>      <!-- Анимированная трава -->
   <div class="timer" id="timer">
     <span id="days">0 дней</span>
     <span id="hours">0 часов</span>
