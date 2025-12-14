@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>RPG Таймер</title>
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    background: #87CEEB; /* Голубое небо */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+
+  .island {
+    position: relative;
+    width: 300px;
+    height: 150px;
+    background: #2E8B57; /* Зеленый остров */
+    border-radius: 50% 50% 20% 20%;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 1.5em;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .timer span {
+    display: block;
+    margin: 5px 0;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<div class="island">
+  <div class="timer" id="timer">
+    <span id="days">0 дней</span>
+    <span id="hours">0 часов</span>
+    <span id="minutes">0 минут</span>
+    <span id="seconds">0 секунд</span>
+  </div>
+</div>
+
+<script>
+function updateTimer() {
+  const endDate = new Date();
+  endDate.setMonth(endDate.getMonth() + 1);
+  endDate.setDate(1);
+  endDate.setHours(0,0,0,0);
+
+  const now = new Date();
+  let diff = Math.max(0, endDate - now);
+
+  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+  diff -= days * (1000 * 60 * 60 * 24);
+
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  diff -= hours * (1000 * 60 * 60);
+
+  const minutes = Math.floor(diff / (1000 * 60));
+  diff -= minutes * (1000 * 60);
+
+  const seconds = Math.floor(diff / 1000);
+
+  document.getElementById('days').textContent = `${days} ${declOfNum(days, ['день','дня','дней'])}`;
+  document.getElementById('hours').textContent = `${hours} ${declOfNum(hours, ['час','часа','часов'])}`;
+  document.getElementById('minutes').textContent = `${minutes} ${declOfNum(minutes, ['минута','минуты','минут'])}`;
+  document.getElementById('seconds').textContent = `${seconds} ${declOfNum(seconds, ['секунда','секунды','секунд'])}`;
+}
+
+function declOfNum(number, titles) {
+  let cases = [2, 0, 1, 1, 1, 2];
+  return titles[(number%100>4 && number%100<20)?2:cases[(number%10<5)?number%10:5]];
+}
+
+setInterval(updateTimer, 1000);
+updateTimer();
+</script>
+
+</body>
+</html>
