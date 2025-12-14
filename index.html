@@ -2,135 +2,113 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>RPG Таймер Пиксельный</title>
+<title>Кнопка с анимацией воды</title>
 <style>
   body {
-    margin: 0;
-    padding: 0;
-    background: #87CEEB; /* Голубое небо */
-    font-family: 'Press Start 2P', cursive; /* Пиксельный шрифт, можно подключить через Google Fonts */
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    overflow: hidden;
+    background: transparent;
+    font-family: 'Segoe UI', sans-serif;
   }
 
-  /* Остров/травка */
-  .island {
+  .btn {
     position: relative;
-    width: 320px;
-    height: 180px;
-    background: #2E8B57;
-    border-radius: 50% 50% 20% 20%;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    text-align: center;
-  }
-
-  /* Анимация травы с помощью CSS keyframes */
-  .grass {
-    position: absolute;
-    bottom: 10px;
-    width: 100%;
-    height: 40px;
-    background: repeating-linear-gradient(
-      135deg,
-      #2e8b57 0 5px,
-      #3cb371 5px 10px
-    );
-    animation: sway 2s infinite alternate;
-  }
-
-  @keyframes sway {
-    0% { transform: translateX(0px) rotate(0deg); }
-    50% { transform: translateX(2px) rotate(1deg); }
-    100% { transform: translateX(-2px) rotate(-1deg); }
-  }
-
-  /* Таймер */
-  .timer {
-    z-index: 2;
-    color: #fff;
-    font-size: 14px;
-    text-align: center;
-  }
-
-  .timer span {
-    display: block;
-    margin: 2px 0;
-    font-weight: bold;
-  }
-
-  /* Пиксельный стиль для таймера */
-  .timer {
-    text-shadow: 1px 1px #000, -1px -1px #000;
-  }
-
-  /* Для вставки GIF рядом с таймером */
-  .character {
-    position: absolute;
-    bottom: 30px;
-    left: -60px;
-    width: 60px;
+    width: 200px;
     height: 60px;
-    background: url('https://media.giphy.com/media/5xaOcLGvzHxDKjufnLW/giphy.gif') no-repeat center/contain;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    background: #2ecc71;
+    border: 2px solid #27ae60;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
     z-index: 1;
+  }
+
+  /* "Вода" внутри кнопки */
+  .btn .water {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 0;
+    background: #27ae60;
+    border-radius: 0 0 10px 10px;
+    z-index: 0;
+    transition: height 1.2s ease-out;
+  }
+
+  /* Брызги */
+  .btn .splashes {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .splash {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: #27ae60;
+    border-radius: 50%;
+    opacity: 0;
+    animation: splashAnim 0.8s forwards;
+  }
+
+  @keyframes splashAnim {
+    0% { transform: translateY(0) scale(1); opacity: 1; }
+    50% { transform: translateY(-15px) scale(1.2); opacity: 1; }
+    100% { transform: translateY(-25px) scale(0.5); opacity: 0; }
+  }
+
+  .btn span {
+    position: relative;
+    z-index: 2;
   }
 
 </style>
 </head>
 <body>
 
-<div class="island">
-  <div class="character"></div> <!-- Пикачу/GIF -->
-  <div class="grass"></div>      <!-- Анимированная трава -->
-  <div class="timer" id="timer">
-    <span id="days">0 дней</span>
-    <span id="hours">0 часов</span>
-    <span id="minutes">0 минут</span>
-    <span id="seconds">0 секунд</span>
-  </div>
-</div>
+<button class="btn" onclick="fillWater(this)">
+  <span>НАЖМИ МЕНЯ</span>
+  <div class="water"></div>
+  <div class="splashes"></div>
+</button>
 
 <script>
-function updateTimer() {
-  const endDate = new Date();
-  endDate.setMonth(endDate.getMonth() + 1);
-  endDate.setDate(1);
-  endDate.setHours(0,0,0,0);
+function fillWater(button) {
+  const water = button.querySelector('.water');
+  const splashesContainer = button.querySelector('.splashes');
 
-  const now = new Date();
-  let diff = Math.max(0, endDate - now);
+  // Заполняем воду
+  water.style.height = '100%';
 
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  diff -= days * (1000 * 60 * 60 * 24);
+  // Создаём брызги
+  for (let i = 0; i < 8; i++) {
+    const splash = document.createElement('div');
+    splash.classList.add('splash');
+    splash.style.left = `${Math.random() * 90 + 5}%`;
+    splash.style.animationDelay = `${Math.random() * 0.3}s`;
+    splashesContainer.appendChild(splash);
 
-  const hours = Math.floor(diff / (1000 * 60 * 60));
-  diff -= hours * (1000 * 60 * 60);
+    // Удаляем брызги через 1.2s
+    setTimeout(() => {
+      splash.remove();
+    }, 1200);
+  }
 
-  const minutes = Math.floor(diff / (1000 * 60));
-  diff -= minutes * (1000 * 60);
-
-  const seconds = Math.floor(diff / 1000);
-
-  document.getElementById('days').textContent = `${days} ${declOfNum(days, ['день','дня','дней'])}`;
-  document.getElementById('hours').textContent = `${hours} ${declOfNum(hours, ['час','часа','часов'])}`;
-  document.getElementById('minutes').textContent = `${minutes} ${declOfNum(minutes, ['минута','минуты','минут'])}`;
-  document.getElementById('seconds').textContent = `${seconds} ${declOfNum(seconds, ['секунда','секунды','секунд'])}`;
+  // Небольшой эффект нажатия
+  button.style.transform = 'scale(1.05)';
+  setTimeout(() => button.style.transform = 'scale(1)', 150);
 }
-
-function declOfNum(number, titles) {
-  let cases = [2, 0, 1, 1, 1, 2];
-  return titles[(number%100>4 && number%100<20)?2:cases[(number%10<5)?number%10:5]];
-}
-
-setInterval(updateTimer, 1000);
-updateTimer();
 </script>
 
 </body>
 </html>
+
